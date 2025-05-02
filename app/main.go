@@ -40,7 +40,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	httpRawData, err := parseBufferToHttpRawData(buffer, n)
+	httpRawData, err := parseHttpRawData(buffer, n)
 	if err != nil {
 		fmt.Println("Failed to parse buffer: ", err.Error())
 		os.Exit(1)

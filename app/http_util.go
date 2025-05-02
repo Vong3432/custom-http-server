@@ -23,7 +23,7 @@ type HttpRequestHeader struct {
 	AcceptedContent string
 }
 
-func parseBufferToHttpRawData(buffer []byte, n int) (HttpRawData, error) {
+func parseHttpRawData(buffer []byte, n int) (HttpRawData, error) {
 	separator := "\r\n"
 	urlPath := string(buffer[:n])
 	urlPaths := strings.Split(urlPath, separator)
