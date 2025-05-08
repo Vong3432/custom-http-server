@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"regexp"
+	"strings"
 )
 
 // Ensures gofmt doesn't remove the "net" and "os" imports above (feel free to remove this!)
@@ -46,9 +48,39 @@ func main() {
 		os.Exit(1)
 	}
 
-	if httpRawData.Request.Target != "/" {
-		fmt.Fprintf(conn, "%s 404 Not Found\r\n\r\n", httpRawData.Request.HttpVersion)
+	target := httpRawData.Request.Target
+
+	// Routes
+	echoRoute := "^/echo/\\w+"
+	matchedEchoRoute, _ := regexp.MatchString(echoRoute, target)
+
+	if matchedEchoRoute {
+		str := GetLast(strings.Split(target, "/echo/"))
+		if str != nil {
+			response := HttpResponse{
+				HttpVersion:   httpRawData.Request.HttpVersion,
+				StatusCode:    200,
+				ContentType:   "text/plain",
+				ContentLength: len(*str),
+				Body:          str,
+			}
+			fmt.Fprint(conn, *response.ToString())
+			os.Exit(1)
+		}
+	}
+
+	if target != "/" {
+		response := HttpResponse{
+			HttpVersion: httpRawData.Request.HttpVersion,
+			StatusCode:  404,
+		}
+		fmt.Fprint(conn, *response.ToString())
 		os.Exit(1)
 	}
-	fmt.Fprintf(conn, "%s 200 OK\r\n\r\n", httpRawData.Request.HttpVersion)
+
+	response := HttpResponse{
+		HttpVersion: httpRawData.Request.HttpVersion,
+		StatusCode:  200,
+	}
+	fmt.Fprint(conn, *response.ToString())
 }
