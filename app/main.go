@@ -69,10 +69,10 @@ func main() {
 		}
 	}
 
-	if target != "/" {
+	if target == "/" {
 		response := HttpResponse{
 			HttpVersion: httpRawData.Request.HttpVersion,
-			StatusCode:  404,
+			StatusCode:  200,
 		}
 		fmt.Fprint(conn, *response.ToString())
 		os.Exit(1)
@@ -80,7 +80,7 @@ func main() {
 
 	response := HttpResponse{
 		HttpVersion: httpRawData.Request.HttpVersion,
-		StatusCode:  200,
+		StatusCode:  404,
 	}
 	fmt.Fprint(conn, *response.ToString())
 }
