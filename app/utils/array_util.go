@@ -1,4 +1,4 @@
-package main
+package utils
 
 // Generic function to get last element of a slice
 func GetLast[T any](s []T) *T {

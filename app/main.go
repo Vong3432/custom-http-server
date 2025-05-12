@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"regexp"
-	"strings"
+
+	Routes "github.com/codecrafters-io/http-server-starter-go/app/routes"
+	Utils "github.com/codecrafters-io/http-server-starter-go/app/utils"
 )
 
 // Ensures gofmt doesn't remove the "net" and "os" imports above (feel free to remove this!)
@@ -42,45 +43,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	httpRawData, err := parseHttpRawData(buffer, n)
+	httpRawData, err := Utils.ParseHttpRawData(buffer, n)
 	if err != nil {
 		fmt.Println("Failed to parse buffer: ", err.Error())
 		os.Exit(1)
 	}
 
-	target := httpRawData.Request.Target
-
-	// Routes
-	echoRoute := "^/echo/\\w+"
-	matchedEchoRoute, _ := regexp.MatchString(echoRoute, target)
-
-	if matchedEchoRoute {
-		str := GetLast(strings.Split(target, "/echo/"))
-		if str != nil {
-			response := HttpResponse{
-				HttpVersion:   httpRawData.Request.HttpVersion,
-				StatusCode:    200,
-				ContentType:   "text/plain",
-				ContentLength: len(*str),
-				Body:          str,
-			}
-			fmt.Fprint(conn, *response.ToString())
-			os.Exit(1)
-		}
-	}
-
-	if target == "/" {
-		response := HttpResponse{
-			HttpVersion: httpRawData.Request.HttpVersion,
-			StatusCode:  200,
-		}
-		fmt.Fprint(conn, *response.ToString())
-		os.Exit(1)
-	}
-
-	response := HttpResponse{
-		HttpVersion: httpRawData.Request.HttpVersion,
-		StatusCode:  404,
-	}
-	fmt.Fprint(conn, *response.ToString())
+	Routes.HandleRoutes(conn, httpRawData.Request)
 }

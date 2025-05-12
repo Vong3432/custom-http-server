@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"errors"
@@ -23,7 +23,7 @@ type HttpRequestHeader struct {
 	AcceptedContent string
 }
 
-func parseHttpRawData(buffer []byte, n int) (HttpRawData, error) {
+func ParseHttpRawData(buffer []byte, n int) (HttpRawData, error) {
 	separator := "\r\n"
 	urlPath := string(buffer[:n])
 	urlPaths := strings.Split(urlPath, separator)
