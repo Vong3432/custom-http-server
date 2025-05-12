@@ -13,27 +13,29 @@ func HandleRoutes(conn net.Conn, request Utils.HttpRequest) {
 	target := request.Target
 
 	// Routes
-	echoRoute := "^/echo/\\w+"
-	matchedEchoRoute, _ := regexp.MatchString(echoRoute, target)
+	echoRoute := regexp.MustCompile(`^/echo/\w+`)
+	userAgentRoute := regexp.MustCompile(`^/user-agent`)
 
-	if matchedEchoRoute {
-		response := handleEchoRoutes(request)
-		fmt.Fprint(conn, *response.ToString())
-		os.Exit(1)
-	}
+	var response Utils.HttpResponse
 
-	if target == "/" {
-		response := Utils.HttpResponse{
+	switch {
+	case echoRoute.MatchString(target):
+		response = handleEchoRoutes(request)
+	case userAgentRoute.MatchString(target):
+		response = handleUserAgentRoutes(request)
+	case target == "/":
+		response = Utils.HttpResponse{
 			HttpVersion: request.HttpVersion,
 			StatusCode:  200,
 		}
-		fmt.Fprint(conn, *response.ToString())
-		os.Exit(1)
+	default:
+		fmt.Printf("fallback")
+		response = Utils.HttpResponse{
+			HttpVersion: request.HttpVersion,
+			StatusCode:  404,
+		}
 	}
 
-	response := Utils.HttpResponse{
-		HttpVersion: request.HttpVersion,
-		StatusCode:  404,
-	}
 	fmt.Fprint(conn, *response.ToString())
+	os.Exit(1)
 }
