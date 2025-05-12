@@ -17,7 +17,7 @@ func HandleRoutes(conn net.Conn, request Utils.HttpRequest) {
 	matchedEchoRoute, _ := regexp.MatchString(echoRoute, target)
 
 	if matchedEchoRoute {
-		response := HandleEchoRoutes(request)
+		response := handleEchoRoutes(request)
 		fmt.Fprint(conn, *response.ToString())
 		os.Exit(1)
 	}

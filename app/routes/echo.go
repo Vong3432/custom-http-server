@@ -6,7 +6,7 @@ import (
 	Utils "github.com/codecrafters-io/http-server-starter-go/app/utils"
 )
 
-func HandleEchoRoutes(request Utils.HttpRequest) Utils.HttpResponse {
+func handleEchoRoutes(request Utils.HttpRequest) Utils.HttpResponse {
 	var response Utils.HttpResponse
 
 	str := Utils.GetLast(strings.Split(request.Target, "/echo/"))
